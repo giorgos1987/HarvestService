@@ -2,6 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>gr.agroknow.client</groupId>
   <artifactId>gr.agroknow.client</artifactId>
+  <!-- <packaging>war</packaging> -->
   <version>0.0.1-SNAPSHOT</version>
   
   
@@ -168,6 +169,8 @@
 			
 
 		</plugins>
+		
+		<!-- <finalName>my-webapp</finalName> -->
 	</build>
   
   

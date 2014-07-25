@@ -13,7 +13,8 @@ public class Server {
 	   protected Server() throws Exception {
 	        JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
 	        sf.setResourceClasses(Service.class);
-	        //sf.setResourceProvider(Service.class, new SingletonResourceProvider(new Service()));
+	        //one accuratly instance of a class
+	    //    sf.setResourceProvider(Service.class, new SingletonResourceProvider(new Service()));
 	        sf.setAddress("http://localhost:8080/");
 
 	        sf.create();

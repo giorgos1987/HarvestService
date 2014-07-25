@@ -3,8 +3,10 @@ package gr.agroknow.client;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,11 +20,11 @@ public class Harvest {
 	private String url;
 	private String directory;
 	private String prefix;
-	private String password;
 	private long id;
 	private String status;
 	
 	
+ 
 	
 	
 	public void setUrl(String url){
@@ -58,16 +60,6 @@ public class Harvest {
 		
 	}
 	
-	public void setPassword(String password){
-		this.password = password;
-		
-		
-	}
-	
-	public String getPassword(){
-		return password;
-		
-	}
 	
 	public void setId(long id){
 		this.id = id;
@@ -92,6 +84,26 @@ public class Harvest {
 		
 	}
 	
+	
+	  static Map<Long, Harvest> harvests = new HashMap<Long, Harvest>();
+		public void addToHarvestList(Long id,Harvest harvest){
+			if(!harvests.containsKey(id));
+				harvests.put(id,harvest);
+			
+		}
+		
+		public static List<Harvest> getListHarvests(){
+			
+			return (List<Harvest>) harvests;
+			
+		} 
+		
+		public Harvest getHarvest(long id){
+			
+			Harvest h = harvests.get(id);
+			
+			return h;
+		} 
 	
 	
 }

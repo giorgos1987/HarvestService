@@ -9,8 +9,10 @@ import java.io.BufferedWriter;
 import java.io.Console;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import java.util.Map;
 
@@ -24,33 +26,61 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 
 
 
 
 @Path("/service/")
+@Produces("text/xml")
 public class Service {
-	 long currentId = 123;
-	 Map<Long, Harvest> harvests = new HashMap<Long, Harvest>();
 	
 	
+	private static final transient Logger logger = LoggerFactory.getLogger(Service.class.getName());
+
+	
+	
+	 static long currentId = 123;
+	// HarvestList list;
+	static Map<Long, Harvest> harvests = new HashMap<Long, Harvest>();
+	// private List<Harvest> harvests = new ArrayList<Harvest>();
 	 
+	
+	 public Service(){
+			logger.info("initialize:before Service init() method ");
+
+		 init();
+	 }
 	 
 
 	@POST
-	    @Path("/harvest/")//@Consumes(value={"application/xml"})
+	    @Path("/harvest/")
+	    @Produces("text/xml")
+	    @Consumes(value={"text/xml"})
 	    public Response addHarvest(Harvest harvest ) throws IOException, InterruptedException {
+		
+		   logger.info("Post.Inside addHarvest");
+
+		
+		
+		   /*harvest.setId(++currentId);
+    	System.out.println("---- Harvester id is: " + currentId);
+    	harvests.put(harvest.getId(), harvest);
+    	harvest.addToHarvestList(harvest.getId(),harvest);*/
 		 	
-		    if ((String)harvest.getPassword() == "gpap"){
 	        	
 		    	//add to list 
 		    	
 		    	harvest.setId(++currentId);//
 		    	System.out.println("---- Harvester id is: " + currentId);
-		    	harvests.put(harvest.getId(),harvest);
-		    	
-		    	FileWriter fstream = new FileWriter("out.txt");//C:\\harvest\\
+		    	//list.addToHarvestList(harvest.getId(),harvest);
+		    	harvests.put(currentId, harvest);
+		    	harvest.addToHarvestList(harvest.getId(),harvest);
+		    	FileWriter fstream = new FileWriter(harvest.getPrefix()+".txt");//C:\\harvest\\
+		    	logger.info("---- File : " + harvest.getPrefix()+".txt created");
     	        BufferedWriter out = new BufferedWriter(fstream);
 		    	
 				try {
@@ -61,7 +91,7 @@ public class Service {
 					java.io.InputStream is = ps.getInputStream();
 			    	// byte b[] = new byte[is.available()];
 			    	 
-			    	 
+					 logger.info("----------------harvest pending .....--------------------");
 			         for (int i = 0; i < is.available(); i++) {
 			        	harvest.setStatus("pending");
 			            System.out.println("" + is.read());
@@ -73,26 +103,24 @@ public class Service {
 			    	// wait for 10 seconds and then destroy the process
 			         Thread.sleep(10000);
 			         harvest.setStatus("completed");
+			         logger.info("-------------------harvest completed--------------------");
 			         ps.destroy();
 			    	 
-			         return  Response.ok().type("application/xml").entity(harvest).build();
+			       //  return  Response.ok().type("application/xml").entity(harvest).build();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					//e.printStackTrace();
 					  harvest.setStatus("broken");
-					return Response.notModified().build();	
+					  logger.info("-------------------thete is a broken link---------------");
+					//return Response.notModified().build();	
 				}
 		    	
 		    	 
 		    //	return  Response.ok().type("application/xml").entity(harvest).build();
-	        }else{        
-	         
-	        	 
-				 return Response.notModified().build();	
-	        }
-	  
+	        // return Response.notModified().build();	
+		    	
 	    
-		   
+		    return  Response.ok().type("application/xml").entity(harvest).build();
 	       
 	    }
 	 	
@@ -100,18 +128,35 @@ public class Service {
 	 
 	   @GET
 	    @Path("/harvest/{id}/")
-	    @Produces(value={"application/xml"})
-	    @Consumes(value={"application/xml"})
-	    public Harvest getUser(@PathParam("id") String id) {
+	    @Produces(value={"text/xml"})
+	    @Consumes(value={"text/xml"})
+	    public Harvest getHarvest(@PathParam("id") String id) {
+		   logger.info("inside getHarvest,harvest with id: "+id);
+
 	        long idNumber = Long.parseLong(id);	        
 	        
-	       
-	        	Harvest h = harvests.get(idNumber);
+	        Harvest h = harvests.get(idNumber);
+	    	System.out.println("---- Harveste with id : " + id);
+
+	       // h = h.getHarvest(idNumber);//list.getHarvest(idNumber);
 	        	
-	        	
-	  
+	        
 	        return h;
 	    }
+	   
+	   
+	    final void init(){
+		   logger.info("inside Service init() method ");
+
+	       long idNumber = Long.parseLong("102");	
+		   Harvest h = new Harvest();
+		   h.setId(idNumber);
+		   //h.addToHarvestList(idNumber, h);
+		   harvests.put(idNumber, h);
+		   
+	   }
+	   
+	   
 	
 	
 }
